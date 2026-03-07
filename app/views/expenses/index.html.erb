@@ -1,29 +1,68 @@
 <% content_for :title, "Expenses" %>
 
-<div class="w-full">
+<div class="max-w-3xl mx-auto px-4 py-10">
+
+  <%# Flash notice %>
   <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
+    <p class="py-2 px-4 bg-green-50 mb-6 text-green-600 font-medium rounded-lg border border-green-200" id="notice"><%= notice %></p>
   <% end %>
 
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Expenses</h1>
-    <%= link_to "New expense", new_expense_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+  <%# Page header %>
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="font-bold text-3xl text-gray-800">Expenses</h1>
+    <%= link_to "+ New Expense", new_expense_path, class: "rounded-lg px-4 py-2.5 bg-blue-600 hover:bg-blue-500 transition-colors text-white font-medium text-sm shadow-sm" %>
   </div>
 
-  <div id="expenses" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @expenses.any? %>
-      <% @expenses.each do |expense| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render expense %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", expense, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= link_to "Edit", edit_expense_path(expense), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= button_to "Destroy", expense, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+  <%# Total amount card %>
+  <div class="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-8 mb-8 shadow-lg text-white">
+    <p class="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-2">Total Spent</p>
+    <p class="text-5xl font-bold tracking-tight"><%= number_to_currency(@total_amount) %></p>
+    <p class="text-blue-200 text-sm mt-3"><%= pluralize(@expenses.size, "expense") %> recorded</p>
+  </div>
+
+  <%# Expense list %>
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+      <h2 class="font-semibold text-gray-700">All Expenses</h2>
+    </div>
+
+    <div id="expenses">
+      <% if @expenses.any? %>
+        <% @expenses.each do |expense| %>
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-6 py-4 border-b border-gray-50 last:border-b-0 hover:bg-gray-50 transition-colors">
+
+            <%# Left: avatar + info %>
+            <div class="flex items-center gap-4 flex-1">
+              <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm flex-shrink-0">
+                <%= expense.category&.first&.upcase || "?" %>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-800"><%= expense.title %></p>
+                <p class="text-sm text-gray-400">
+                  <%= expense.category %> &middot; <%= expense.entry_date&.strftime("%b %d, %Y") %>
+                </p>
+              </div>
+            </div>
+
+            <%# Right: amount + actions %>
+            <div class="flex items-center gap-4 mt-3 sm:mt-0">
+              <span class="font-bold text-gray-800 text-lg"><%= number_to_currency(expense.amount) %></span>
+              <%= link_to "Show", expense, class: "text-sm text-gray-400 hover:text-gray-600 font-medium" %>
+              <%= link_to "Edit", edit_expense_path(expense), class: "text-sm text-blue-500 hover:text-blue-700 font-medium" %>
+              <%= button_to "Delete", expense, method: :delete,
+                    class: "text-sm text-red-400 hover:text-red-600 font-medium bg-transparent border-0 cursor-pointer p-0",
+                    data: { turbo_confirm: "Delete this expense?" } %>
+            </div>
+
           </div>
+        <% end %>
+      <% else %>
+        <div class="py-16 text-center text-gray-400">
+          <p class="text-lg font-medium">No expenses yet</p>
+          <p class="text-sm mt-1">Add your first expense to get started.</p>
         </div>
       <% end %>
-    <% else %>
-      <p class="text-center my-10">No expenses found.</p>
-    <% end %>
+    </div>
   </div>
+
 </div>
