@@ -16,15 +16,31 @@
     <%= link_to "+ New Expense", new_expense_path, class: "rounded-lg px-4 py-2.5 bg-blue-600 hover:bg-blue-500 transition-colors text-white font-semibold text-sm shadow-sm" %>
   </div>
 
-  <%# Total Expenses card %>
-  <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-8 mb-8 shadow-xl text-white">
-    <p class="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-3">Total Expenses</p>
-    <p class="text-6xl font-extrabold tracking-tight"><%= number_to_currency(@total_amount) %></p>
-    <div class="flex items-center gap-2 mt-4">
-      <span class="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
-        <%= pluralize(@expenses.size, "expense") %> recorded
-      </span>
+  <%# Summary cards %>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+
+    <%# Total Lifetime card %>
+    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-7 shadow-xl text-white">
+      <p class="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-3">Total Lifetime</p>
+      <p class="text-5xl font-extrabold tracking-tight"><%= number_to_currency(@total_amount) %></p>
+      <div class="mt-4">
+        <span class="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
+          <%= pluralize(@expenses.size, "expense") %> recorded
+        </span>
+      </div>
     </div>
+
+    <%# Current Month card %>
+    <div class="bg-gradient-to-br from-emerald-500 to-green-700 rounded-2xl p-7 shadow-xl text-white">
+      <p class="text-green-200 text-xs font-semibold uppercase tracking-widest mb-3">Current Month</p>
+      <p class="text-5xl font-extrabold tracking-tight"><%= number_to_currency(@monthly_total) %></p>
+      <div class="mt-4">
+        <span class="bg-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
+          <%= Date.current.strftime("%B %Y") %>
+        </span>
+      </div>
+    </div>
+
   </div>
 
   <%# Expenses table %>

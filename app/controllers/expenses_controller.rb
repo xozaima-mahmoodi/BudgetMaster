@@ -5,6 +5,9 @@ class ExpensesController < ApplicationController
   def index
     @expenses = Expense.all
     @total_amount = @expenses.sum(:amount)
+
+    current_month_expenses = Expense.where(entry_date: Date.current.beginning_of_month..Date.current.end_of_month)
+    @monthly_total = current_month_expenses.sum(:amount)
   end
 
   # GET /expenses/1 or /expenses/1.json
