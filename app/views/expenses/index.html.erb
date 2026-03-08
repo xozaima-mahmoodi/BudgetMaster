@@ -49,6 +49,38 @@
 
     </div>
 
+    <%# Budget progress card %>
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
+      <div class="flex justify-between items-center mb-3">
+        <div>
+          <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Monthly Budget</p>
+          <p class="text-2xl font-extrabold text-slate-800 mt-0.5">
+            <%= number_to_currency(@monthly_total) %>
+            <span class="text-sm font-medium text-slate-400">/ <%= number_to_currency(@monthly_budget) %></span>
+          </p>
+        </div>
+        <span class="text-2xl font-extrabold <%= @budget_percentage >= 90 ? 'text-red-500' : 'text-emerald-500' %>">
+          <%= @budget_percentage %>%
+        </span>
+      </div>
+
+      <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+        <div class="h-3 rounded-full transition-all duration-500
+                    <%= @budget_percentage >= 90 ? 'bg-red-500' : @budget_percentage >= 60 ? 'bg-amber-400' : 'bg-emerald-500' %>"
+             style="width: <%= @budget_percentage %>%">
+        </div>
+      </div>
+
+      <p class="text-xs text-slate-400 mt-2">
+        <% remaining = @monthly_budget - @monthly_total %>
+        <% if remaining > 0 %>
+          <%= number_to_currency(remaining) %> remaining this month
+        <% else %>
+          Over budget by <%= number_to_currency(remaining.abs) %>
+        <% end %>
+      </p>
+    </div>
+
     <%# Expenses table card %>
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
 

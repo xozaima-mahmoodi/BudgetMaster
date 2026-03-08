@@ -2,11 +2,14 @@ class ExpensesController < ApplicationController
   before_action :set_expense, only: %i[ show edit update destroy ]
 
   def index
-    @expenses     = Expense.order(entry_date: :desc)
+    @expenses = Expense.order(entry_date: :desc)
     @total_amount = Expense.sum(:amount)
     @monthly_total = Expense.where(
       entry_date: Date.current.beginning_of_month..Date.current.end_of_month
     ).sum(:amount)
+
+    @monthly_budget = 1000
+    @budget_percentage = [(@monthly_total / @monthly_budget * 100).to_f.round(1), 100].min
   end
 
   def show; end
