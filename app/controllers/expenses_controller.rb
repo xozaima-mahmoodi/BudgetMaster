@@ -1,32 +1,20 @@
 class ExpensesController < ApplicationController
   before_action :set_expense, only: %i[ show edit update destroy ]
 
-  # GET /expenses or /expenses.json
   def index
-    @expenses = Expense.all
-    @total_amount = @expenses.sum(:amount)
-
-    current_month_expenses = Expense.where(entry_date: Date.current.beginning_of_month..Date.current.end_of_month)
-    @monthly_total = current_month_expenses.sum(:amount)
+    @expenses     = Expense.order(entry_date: :desc)
+    @total_amount = Expense.sum(:amount)
+    @monthly_total = Expense.where(
+      entry_date: Date.current.beginning_of_month..Date.current.end_of_month
+    ).sum(:amount)
   end
 
-  # GET /expenses/1 or /expenses/1.json
-  def show
-  end
+  def show; end
+  def new; @expense = Expense.new; end
+  def edit; end
 
-  # GET /expenses/new
-  def new
-    @expense = Expense.new
-  end
-
-  # GET /expenses/1/edit
-  def edit
-  end
-
-  # POST /expenses or /expenses.json
   def create
     @expense = Expense.new(expense_params)
-
     respond_to do |format|
       if @expense.save
         format.html { redirect_to @expense, notice: "Expense was successfully created." }
@@ -38,7 +26,6 @@ class ExpensesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /expenses/1 or /expenses/1.json
   def update
     respond_to do |format|
       if @expense.update(expense_params)
@@ -51,10 +38,8 @@ class ExpensesController < ApplicationController
     end
   end
 
-  # DELETE /expenses/1 or /expenses/1.json
   def destroy
     @expense.destroy!
-
     respond_to do |format|
       format.html { redirect_to expenses_path, notice: "Expense was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
@@ -62,13 +47,12 @@ class ExpensesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_expense
-      @expense = Expense.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def expense_params
-      params.expect(expense: [ :title, :amount, :category, :entry_date ])
-    end
+  def set_expense
+    @expense = Expense.find(params.expect(:id))
+  end
+
+  def expense_params
+    params.expect(expense: [ :title, :amount, :category, :entry_date ])
+  end
 end
