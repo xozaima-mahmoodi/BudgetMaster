@@ -1,16 +1,15 @@
 <% content_for :title, "Expenses" %>
+<% percentage_spent = @percentage_spent.to_f %>
+<% progress_width = percentage_spent.clamp(0.0, 100.0) %>
 
-<div class="min-h-screen bg-slate-100 py-10 px-4">
-  <div class="max-w-5xl mx-auto">
-
-    <%# Flash notice %>
+<div class="flex justify-center min-h-screen bg-slate-50">
+  <div class="w-full max-w-3xl px-4 py-10">
     <% if notice.present? %>
-      <p class="py-2 px-4 bg-emerald-50 mb-6 text-emerald-700 font-medium rounded-lg border border-emerald-200" id="notice">
+      <p class="py-2 px-4 mb-6 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 font-medium" id="notice">
         <%= notice %>
       </p>
     <% end %>
 
-    <%# Page header %>
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
       <div>
         <h1 class="font-extrabold text-3xl text-slate-800 tracking-tight">BudgetMaster</h1>
@@ -22,10 +21,7 @@
       <% end %>
     </div>
 
-    <%# Stats cards %>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-
-      <%# Total Lifetime %>
       <div class="relative overflow-hidden bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-7 shadow-lg text-white">
         <div class="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full"></div>
         <div class="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full"></div>
@@ -36,7 +32,6 @@
         </span>
       </div>
 
-      <%# This Month %>
       <div class="relative overflow-hidden bg-gradient-to-br from-emerald-500 to-teal-700 rounded-2xl p-7 shadow-lg text-white">
         <div class="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full"></div>
         <div class="absolute -bottom-8 -right-2 w-24 h-24 bg-white/5 rounded-full"></div>
@@ -46,10 +41,8 @@
           <%= Date.current.strftime("%B %Y") %>
         </span>
       </div>
-
     </div>
 
-    <%# Budget progress card %>
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 mb-8">
       <div class="flex justify-between items-center mb-3">
         <div>
@@ -59,15 +52,14 @@
             <span class="text-sm font-medium text-slate-400">/ <%= number_to_currency(@monthly_budget) %></span>
           </p>
         </div>
-        <span class="text-2xl font-extrabold <%= @budget_percentage >= 90 ? 'text-red-500' : 'text-emerald-500' %>">
-          <%= @budget_percentage %>%
+        <span class="text-2xl font-extrabold <%= percentage_spent >= 90 ? 'text-red-500' : 'text-emerald-500' %>">
+          <%= percentage_spent.round(1) %>%
         </span>
       </div>
 
       <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-        <div class="h-3 rounded-full transition-all duration-500
-                    <%= @budget_percentage >= 90 ? 'bg-red-500' : @budget_percentage >= 60 ? 'bg-amber-400' : 'bg-emerald-500' %>"
-             style="width: <%= @budget_percentage %>%">
+        <div class="h-3 rounded-full transition-all duration-500 <%= percentage_spent >= 90 ? 'bg-red-500' : percentage_spent >= 60 ? 'bg-amber-400' : 'bg-emerald-500' %>"
+             style="width: <%= progress_width %>%">
         </div>
       </div>
 
@@ -81,9 +73,7 @@
       </p>
     </div>
 
-    <%# Expenses table card %>
     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-
       <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50">
         <div>
           <h2 class="font-bold text-slate-700 text-lg">All Expenses</h2>
@@ -106,46 +96,33 @@
             <tbody class="divide-y divide-slate-50">
               <% @expenses.each do |expense| %>
                 <tr class="hover:bg-slate-50 transition-colors group">
-
-                  <%# Title %>
                   <td class="px-6 py-4">
                     <p class="font-semibold text-slate-800 group-hover:text-blue-600 transition-colors">
                       <%= expense.title %>
                     </p>
                   </td>
-
-                  <%# Category badge %>
                   <td class="px-6 py-4">
                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold <%= category_color_class(expense.category) %>">
                       <%= expense.category&.capitalize %>
                     </span>
                   </td>
-
-                  <%# Date %>
                   <td class="px-6 py-4">
                     <span class="text-sm text-slate-500"><%= expense.entry_date&.strftime("%b %d, %Y") %></span>
                   </td>
-
-                  <%# Amount %>
                   <td class="px-6 py-4 text-right">
                     <span class="font-extrabold text-slate-800 tabular-nums">
                       <%= number_to_currency(expense.amount) %>
                     </span>
                   </td>
-
-                  <%# Actions %>
                   <td class="px-6 py-4 text-right">
                     <div class="flex justify-end items-center gap-3 opacity-50 group-hover:opacity-100 transition-opacity">
-                      <%= link_to "Show", expense,
-                            class: "text-xs text-slate-500 hover:text-slate-700 font-semibold" %>
-                      <%= link_to "Edit", edit_expense_path(expense),
-                            class: "text-xs text-blue-500 hover:text-blue-700 font-semibold" %>
+                      <%= link_to "Show", expense, class: "text-xs text-slate-500 hover:text-slate-700 font-semibold" %>
+                      <%= link_to "Edit", edit_expense_path(expense), class: "text-xs text-blue-500 hover:text-blue-700 font-semibold" %>
                       <%= button_to "Delete", expense, method: :delete,
                             class: "text-xs text-red-400 hover:text-red-600 font-semibold bg-transparent border-0 cursor-pointer p-0",
                             data: { turbo_confirm: "Delete this expense?" } %>
                     </div>
                   </td>
-
                 </tr>
               <% end %>
             </tbody>
@@ -160,8 +137,6 @@
                 class: "inline-block rounded-xl px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm shadow-md transition-colors" %>
         </div>
       <% end %>
-
     </div>
-
   </div>
 </div>
